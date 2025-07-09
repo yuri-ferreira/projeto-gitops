@@ -3,6 +3,12 @@
 - [Objetivos](#Objetivos)
 - [Pré-requisitos](#Pré-requisitos)
 
+1. [Fork e repositório GitHub.](#ForkerepositórioGitHub.)
+2. [Instalar o ArgoCD no cluster local.](#InstalaroArgoCDnoclusterlocal.)
+3. [Acessar e criar um app localmente no ArgoCD](#AcessarecriarumapplocalmentenoArgoCD)
+4. [Acessar o front-end](#Acessarofront-end)
+5. [(**EXTRA**) Customizando o manifest.yaml](#ForkerepositórioGitHub.)
+
 ---
 
 ## Objetivos
@@ -60,6 +66,8 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 Com esse comando será possível acessar o ArgoCD no localhost:8080.
 
+![Tela login ArgoCD](/imgs/argocd-login.png)
+
 Agora, será necessário encontrar as credenciais para logar. O usuário é admin e a senha devemos executar os seguintes comandos para ter acesso a ela:
 
 ```cmd
@@ -70,4 +78,117 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 
 Com isso, é possível logar no ArgoCD.
 
-## 4.
+![Tela home ArgoCD](/imgs/argocd-home.png)
+
+Agora deve-se criar o app no ArgoCD, para isso:
+
+Clique em "applications", e em seguida "new app".
+
+Na tela, é necessário preencher alguns campos:
+
+![Tela app ArgoCD](/imgs/argocd-app.png)
+
+**Application Name:**: _online-boutique_
+
+**Project Name:** _nome-do-projeto-criado_
+
+**Sync Policy:** _Automatic_
+
+**Marcar os seguintes:** _Prune Resources, Self Heal, Set Deletion Finalizer, Auto-Create Namespace_.
+
+![Tela app ArgoCD](/imgs/argocd-app2.png)
+
+**Repository URL:** _url do repositório_
+
+**Revision:** _main_
+
+**Path:** _./gitops-microservices/k8s_
+
+**Cluster URL:** **Importante, troque para "NAME"**, e digite/selecione _in-cluster_
+
+**Namespace:** _online-boutique_
+
+Preenchendo essas informações, clique em "Create".
+
+Assim, o aplicativo começará a sincronizar com o repositório.
+
+![Tela app-status ArgoCD](/imgs/argocd-appstatus.png)
+
+## 4. Acessar o front-end
+
+Para isso precisamos fazer o port-forward do app,em um terminal execute:
+
+```cmd
+kubectl port-forward svc/frontend-external 80:80 -n online-boutique
+```
+
+![Tela Terminal](/imgs/terminal.png)
+
+Com isso será possível acessar o front-end com o ip 127.0.0.1:80
+
+![Tela app online-boutique](/imgs/site.png)
+
+## 5. (**EXTRA**) Customizando o manifest.yaml
+
+Há várias mudanças que podem ser feitas no manifesto, podem ser alteradas a quantidade de réplicas, alterar a versão da imagem dos containers, limite de recursos como CPU e Memória, criar um novo volume.
+
+Para alterar alguns desses, deve-se alterar os seguintes:
+
+Réplicas:
+
+```kubernetes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgenerator
+  labels:
+    app: loadgenerator
+spec:
+  selector:
+    matchLabels:
+      app: loadgenerator
+  replicas: 5
+  template:
+    metadata:
+```
+
+Foi alterado o número de réplicas atráves da mudança da linha "_replicas_" no **spec**. Neste exemplo foi alterado o número padrão de réplicas (1) para 5.
+
+Limite CPU, Memória:
+
+```kubernetes
+ containers:
+        - name: redis
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+          image: redis:alpine
+          ports:
+            - containerPort: 6379
+          readinessProbe:
+            periodSeconds: 5
+            tcpSocket:
+              port: 6379
+          livenessProbe:
+            periodSeconds: 5
+            tcpSocket:
+              port: 6379
+          volumeMounts:
+            - mountPath: /data
+              name: redis-data
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 500m
+            requests:
+              cpu: 100m
+              memory: 300Mi
+```
+
+Aqui em **resources**, foi alterado os valores de _requests_ e _limits_, que no padrão estavam definidos: cpuRequest(**70m**), cpuLimit(**125m**), memoryRequest(**200Mi**), memoryLimit(**256Mi**).
+
+Essas configurações definem o quanto de _memória_ e _cpu_ um _container_ pode solicitar e utilizar no máximo.
