@@ -3,11 +3,11 @@
 - [Objetivos](#Objetivos)
 - [Pré-requisitos](#Pré-requisitos)
 
-1. [Fork e repositório GitHub.](#ForkerepositórioGitHub.)
-2. [Instalar o ArgoCD no cluster local.](#InstalaroArgoCDnoclusterlocal.)
-3. [Acessar e criar um app localmente no ArgoCD](#AcessarecriarumapplocalmentenoArgoCD)
-4. [Acessar o front-end](#Acessarofront-end)
-5. [(**EXTRA**) Customizando o manifest.yaml](#ForkerepositórioGitHub.)
+1. [Fork e repositório GitHub.](#Fork)
+2. [Instalar o ArgoCD no cluster local.](#Instalar)
+3. [Acessar e criar um app localmente no ArgoCD](#Acesso)
+4. [Acessar o front-end](#Acessar)
+5. [(**EXTRA**) Customizando o manifest.yaml](<#(EXTRA)>)
 
 ---
 
@@ -56,7 +56,7 @@ Em seguida, é necessário aplicar os manifests de instalação do ArgoCD. Em um
 kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-## 3. Acessar e criar um app localmente no ArgoCD
+## 3. Acesso e criar um app localmente no ArgoCD
 
 Para acessar o ArgoCD é necessário primeiro fazer um port-forward, para tal execute em um terminal:
 
