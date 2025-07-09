@@ -3,11 +3,11 @@
 - [Objetivos](#Objetivos)
 - [Pré-requisitos](#Pré-requisitos)
 
-1. [Fork e repositório GitHub.](#Fork)
-2. [Instalar o ArgoCD no cluster local.](#Instalar)
-3. [Acessar e criar um app localmente no ArgoCD](#Acesso)
-4. [Acessar o front-end](#Acessar)
-5. [(**EXTRA**) Customizando o manifest.yaml](<#(EXTRA)>)
+1. [Fork e repositório GitHub.](#1.)
+2. [Instalar o ArgoCD no cluster local.](#2.)
+3. [Acessar e criar um app localmente no ArgoCD](#3.)
+4. [Acessar o front-end](#4.)
+5. [(**EXTRA**) Customizando o manifest.yaml](#5.)
 
 ---
 
