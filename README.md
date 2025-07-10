@@ -8,12 +8,13 @@
 3. Acessar e criar um app localmente no ArgoCD
 4. Acessar o front-end
 5. (**EXTRA**) Customizando o manifest.yaml
+6. (**EXTRA**) Criar um app com um repositório privado
 
 ---
 
 ## Objetivos
 
-## Executar um conjunto de microserviços (Online Boutique) em Kubernetes local usando Rancher Desktop, controlado por GitOps com ArgoCD, a partir de um repositório público no GitHub.
+### Executar um conjunto de microserviços (Online Boutique) em Kubernetes local usando Rancher Desktop, controlado por GitOps com ArgoCD, a partir de um repositório público no GitHub.
 
 ## Pré-requisitos
 
@@ -192,3 +193,45 @@ Limite CPU, Memória:
 Aqui em **resources**, foi alterado os valores de _requests_ e _limits_, que no padrão estavam definidos: cpuRequest(**70m**), cpuLimit(**125m**), memoryRequest(**200Mi**), memoryLimit(**256Mi**).
 
 Essas configurações definem o quanto de _memória_ e _cpu_ um _container_ pode solicitar e utilizar no máximo.
+
+## 6. (**EXTRA**) Criar um app com um repositório privado
+
+Há certos momentos em que um repositório deve ser privado, nisso é feito um processo diferente para criação de um app no ArgoCD.
+
+Para tal, deve-se:
+
+- ### Criar um repositório privado no github.
+
+Para isso, na página de criação do repositório selecione "Private"
+
+![Tela github criação repositório](/imgs/github-privado.png)
+
+- ### Agora deve-se criar uma chave SSH, para isso execute em um terminal:
+
+```cmd
+ssh-keygen -t rsa -b 4096 -C "argocd-repo-access" -f E:\chave
+```
+
+Com esse comando será criado duas chaves, uma pública e uma privada. Neste caso, não foi utilizado passphrase.
+
+- ### Adicionar a chave pública ao repositório privado.
+
+Clique em "_Settings_" do repositório, e siga as etapas nas imagens abaixo:
+
+![Tela github adição chave pública no repositório](/imgs/github-addkey.png)
+
+![Tela github adição chave pública no repositório](/imgs/github-addkey2.png)
+
+**Importante:** Deve-se preencher a "key" com o conteúdo do arquivo da chave pública, para acessa-lo, pode-se abrir no vs code ou utilizar o comando **cat**. **Deve-se também marcar "Allow write acess"**.
+
+- ### Adicionar a chave privada ao ArgoCD
+
+Deve-se ter o ArgoCLI instalado em seu dispositivo. Em um terminal execute:
+
+```cmd
+argocd repo add git@github.com:SEU_USUARIO/SEU_REPOSITORIO.git --ssh-private-key-path E:\chave
+```
+
+### Pronto, agora é possível criar um app com o repositório privado.
+
+**Importante:** Como foi utilizado via SSH, o repoURL na criação do app deve seguir o formado SSH. Por exemplo: **git@github.com:SEU_USUARIO/SEU_REPOSITORIO.git**
