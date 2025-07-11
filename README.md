@@ -91,7 +91,7 @@ Na tela, é necessário preencher alguns campos:
 
 **Application Name:**: _online-boutique_
 
-**Project Name:** _nome-do-projeto-criado_
+**Project Name:** _nome-do-projeto-criado_ (Pode-se utilizar _default_)
 
 **Sync Policy:** _Automatic_
 
@@ -120,7 +120,7 @@ Assim, o aplicativo começará a sincronizar com o repositório.
 Para isso precisamos fazer o port-forward do app,em um terminal execute:
 
 ```cmd
-kubectl port-forward svc/frontend-external 80:80 -n online-boutique
+kubectl port-forward svc/frontend 80:80 -n online-boutique
 ```
 
 ![Tela Terminal](/imgs/terminal.png)
